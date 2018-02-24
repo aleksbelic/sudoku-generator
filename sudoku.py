@@ -21,3 +21,8 @@ class Helper:
     def get_rand_num(min, max):
         """Returns random integer between min & max (both values included)."""
         return random.randint(min, max)
+
+    @staticmethod
+    def get_rand_unique_list(min, max):
+        """Returns random list of unique integers between min & max (both values included)."""
+        return random.sample(range(min,max + 1), max - min + 1)
