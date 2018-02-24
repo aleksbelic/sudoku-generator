@@ -1,5 +1,5 @@
 import time
-from sudoku import SudokuTable
+from sudoku import SudokuTable, Helper
 
 #start_time = time.time()
 table = SudokuTable(9)

@@ -14,6 +14,10 @@ class SudokuTable:
         for row in self.layout:
             print(row)
 
-    def get_random_num(self, min, max):
-        """Returns random number between min & max (both values included)."""
-        return random.randrange(min, max, 1)
+class Helper:
+    """Some docstring"""
+
+    @staticmethod
+    def get_rand_num(min, max):
+        """Returns random integer between min & max (both values included)."""
+        return random.randint(min, max)
