@@ -1,46 +1,47 @@
 import random, math
+#import csv
 
-class SudokuTable:
+class Sudoku:
     """Some docstring."""
     def __init__(self, size):
         self.size = size
-        self.layout = []
+        self.grid = []
         for _ in range(self.size):
-            self.layout.append([])
-        self.generate_layout()
+            self.grid.append([])
+        self.generate_grid()
 
     #TODO
-    def generate_layout(self):
-        """Generates random sudoku table layout."""
+    def generate_grid(self):
+        """Generates random grid."""
         for row in range(self.size):
-            self.layout[row] = Helper.get_rand_unique_list(1, self.size)
+            self.grid[row] = Helper.get_rand_unique_list(1, self.size)
 
     #TODO
-    def check_layout(self):
-        """Checks sudoku table layout."""
+    def check_grid(self):
+        """Checks grid."""
 
         # checking rows
         for row in range(self.size):
-            if len(set(self.layout[row])) != self.size:
+            if len(set(self.grid[row])) != self.size:
                 return False
 
         #checking columns
         for i in range(self.size):
             column = []
             for j in range(self.size):
-                column.append(self.layout[j][i])
+                column.append(self.grid[j][i])
             if len(set(column)) != self.size:
                 print(set(column))
                 return False
 
-        #checking regions
-        region_count = int(math.sqrt(self.size))
+        #checking boxes
+        box_count = int(math.sqrt(self.size))
 
         return True
 
-    def print_layout(self):
-        """Prints sudoku table layout."""
-        for row in self.layout:
+    def print_grid(self):
+        """Prints grid."""
+        for row in self.grid:
             print(row)
   
 class Helper:
@@ -55,9 +56,18 @@ class Helper:
     def get_rand_unique_list(min, max):
         """Returns random list of unique integers between min & max (both values included)."""
         return random.sample(range(min,max + 1), max - min + 1)
+    """
+    @staticmethod
+    def store(value):
+        csv_path = "C:\\xampp\\htdocs\\alex\\sudoku-generator\\grid stash\\9x9.csv"
+        csv_obj = open(csv_path, 'a')
+        csv_writer = csv.writer(csv_obj)
+        csv_writer.writerow(value)
+    """
 
     @staticmethod
     def test():
         """Just for testing"""
-        col = [9,8,7,7,6]
-        print(set(col))
+        file = open('./grid stash/9x9.txt', 'a')
+        file.write('Test')
+        file.close()

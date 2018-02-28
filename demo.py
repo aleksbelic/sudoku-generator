@@ -1,10 +1,11 @@
 import time
-from sudoku import SudokuTable, Helper
+from sudoku import Sudoku, Helper
 
 #start_time = time.time()
-table = SudokuTable(9)
-table.print_layout()
-print(table.check_layout())
+sudoku = Sudoku(4)
+sudoku.print_grid()
+#print(sudoku.check_grid())
 #print("--- %s seconds ---" % (time.time() - start_time))
 
 #Helper.test()
+#Helper.store(11)
