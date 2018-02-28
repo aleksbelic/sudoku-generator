@@ -6,23 +6,29 @@ class Sudoku:
     def __init__(self, size):
         self.size = size
         self.grid = []
-        for _ in range(self.size):
+        for row_index in range(self.size):
             self.grid.append([])
-        self.generate_grid()
+            for _ in range(self.size):
+                self.grid[row_index].append(dict(
+                    value = Helper.get_rand_num(1, 9),
+                    candidates = Helper.get_rand_unique_list(1, self.size)
+                ))
+
+        #self.generate_grid()
 
     #TODO
     def generate_grid(self):
-        """Generates random grid."""
-        for row in range(self.size):
-            self.grid[row] = Helper.get_rand_unique_list(1, self.size)
+        """Generates random sudoku grid."""
+        for row_index in range(self.size):
+            self.grid[row_index] = Helper.get_rand_unique_list(1, self.size)
 
     #TODO
     def check_grid(self):
-        """Checks grid."""
+        """Checks sudoku grid."""
 
         # checking rows
-        for row in range(self.size):
-            if len(set(self.grid[row])) != self.size:
+        for row_index in range(self.size):
+            if len(set(self.grid[row_index])) != self.size:
                 return False
 
         #checking columns
@@ -40,10 +46,26 @@ class Sudoku:
         return True
 
     def print_grid(self):
-        """Prints grid."""
-        for row in self.grid:
+        """Prints sudoku grid."""
+        sizeSqrt = int(math.sqrt(self.size))
+        for row_index in range(self.size):
+            # printing horizontal dashes
+            if row_index != 0 and row_index % sizeSqrt == 0:
+                dashes = ""
+                for box_counter in range(sizeSqrt):
+                    if box_counter != 0:
+                        dashes += "+"
+                    for _ in range(sizeSqrt):
+                        dashes += "---"
+                print(dashes)
+            # printing row
+            row = ""
+            for cell_index, cell in enumerate(self.grid[row_index]):
+                if cell_index != 0 and cell_index % sizeSqrt == 0:
+                    row += "|"
+                row += " " + str(cell["value"]) + " "
             print(row)
-  
+
 class Helper:
     """Some docstring"""
 
