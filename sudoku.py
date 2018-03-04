@@ -10,25 +10,42 @@ class Sudoku:
             self.grid.append([])
             for _ in range(self.size):
                 self.grid[row_index].append(dict(
-                    value = Helper.get_rand_num(1, 9),
-                    candidates = Helper.get_rand_unique_list(1, self.size)
+                    value = None,
+                    candidates = list(range(1, self.size + 1)) #Helper.get_rand_unique_list(1, self.size)
                 ))
 
-        #self.generate_grid()
+        self.generate_grid()
 
     #TODO
     def generate_grid(self):
         """Generates random sudoku grid."""
         for row_index in range(self.size):
-            self.grid[row_index] = Helper.get_rand_unique_list(1, self.size)
+            for column_index in range(self.size):
+
+                for candidate_index, candidate in enumerate(self.grid[row_index][column_index]["candidates"]):
+                    if self.check_candidate(row_index, column_index, candidate) == True: # check candidate
+                        self.grid[row_index][column_index]["value"] = candidate
+                        break
 
     #TODO
+    def check_candidate(self, candidate_row_index, candidate_column_index, candidate):
+        # checking row
+        for i in range(0, candidate_column_index): # candidate_column_index excluded
+            #print(self.grid[candidate_row_index][i]["value"])
+            if self.grid[candidate_row_index][i]["value"] == candidate:
+                return False
+        
+        # checking column
+        return True # OK
+
+    """
+    #TODO
     def check_grid(self):
-        """Checks sudoku grid."""
+        #Checks sudoku grid.
 
         # checking rows
         for row_index in range(self.size):
-            if len(set(self.grid[row_index])) != self.size:
+            if len(set(self.grid[row_index])) != self.size: # set removes the duplicates
                 return False
 
         #checking columns
@@ -37,13 +54,13 @@ class Sudoku:
             for j in range(self.size):
                 column.append(self.grid[j][i])
             if len(set(column)) != self.size:
-                print(set(column))
                 return False
 
         #checking boxes
         box_count = int(math.sqrt(self.size))
 
         return True
+    """
 
     def print_grid(self):
         """Prints sudoku grid."""
@@ -89,7 +106,5 @@ class Helper:
 
     @staticmethod
     def test():
-        """Just for testing"""
-        file = open('./grid stash/9x9.txt', 'a')
-        file.write('Test')
-        file.close()
+        for i in range (5, -1, -1):
+            print(i)
