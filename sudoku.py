@@ -36,6 +36,11 @@ class Sudoku:
                 return False
         
         # checking column
+        for j in range(0, candidate_row_index): # candidate_row_index excluded
+            #print(self.grid[candidate_row_index][i]["value"])
+            if self.grid[j][candidate_column_index]["value"] == candidate:
+                return False
+        
         return True # OK
 
     """
