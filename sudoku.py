@@ -10,8 +10,8 @@ class Sudoku:
             self.grid.append([])
             for _ in range(self.size):
                 self.grid[row_index].append(dict(
-                    value = None,
-                    candidates = list(range(1, self.size + 1)) #Helper.get_rand_unique_list(1, self.size)
+                    value = "_",
+                    candidates = Helper.get_rand_unique_list(1, self.size)
                 ))
 
         self.generate_grid()
@@ -41,6 +41,18 @@ class Sudoku:
             if self.grid[j][candidate_column_index]["value"] == candidate:
                 return False
         
+        #checking box
+        sqrtSize = int(math.sqrt(self.size))
+        candidate_box_row_index = int(candidate_row_index / sqrtSize)
+        candidate_box_column_index = int(candidate_column_index / sqrtSize)
+        for i in range(self.size):
+            for j in range(self.size):
+                box_row_index = int(i / sqrtSize)
+                box_column_index = int(j / sqrtSize)
+                if candidate_box_row_index == box_row_index and candidate_box_column_index == box_column_index:
+                    if candidate == self.grid[i][j]["value"]:
+                        return False
+
         return True # OK
 
     """
