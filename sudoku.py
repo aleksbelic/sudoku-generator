@@ -1,5 +1,5 @@
 import random, math, winsound
-#import csv
+import csv
 
 class Sudoku:
     """Some docstring."""
@@ -144,14 +144,13 @@ class Helper:
     def get_rand_unique_list(min, max):
         """Returns random list of unique integers between min & max (both values included)."""
         return random.sample(range(min,max + 1), max - min + 1)
-    """
+
     @staticmethod
     def store(value):
         csv_path = "C:\\xampp\\htdocs\\alex\\sudoku-generator\\grid stash\\9x9.csv"
-        csv_obj = open(csv_path, 'a')
+        csv_obj = open(csv_path, 'a', newline='')
         csv_writer = csv.writer(csv_obj)
         csv_writer.writerow(value)
-    """
 
     @staticmethod
     def test():
