@@ -1,10 +1,12 @@
-import random, math, winsound
-import csv
+import random, math, winsound, time, csv
 
 class Sudoku:
     """Some docstring."""
-    def __init__(self, size):
+    def __init__(self, size, timer = False, sound = True, store = False):
         self.size = size
+        self.timer = timer
+        self.store = store
+        self.sound = sound
         self.grid = []
         for row_index in range(self.size):
             self.grid.append([])
@@ -13,12 +15,15 @@ class Sudoku:
                     value = "_",
                     candidates = Helper.get_rand_unique_list(1, self.size)
                 ))
-
         self.generate_grid()
 
     #TODO
     def generate_grid(self):
         """Generates random sudoku grid."""
+
+        if self.timer:
+            start_time = time.time()
+
         row_index = 0
         column_index = 0
         while (row_index < self.size):
@@ -37,7 +42,7 @@ class Sudoku:
                 else:
                     candidate = self.grid[row_index][column_index]["candidates"][0]
                 
-                if self.check_candidate(row_index, column_index, candidate) == True: # check candidate
+                if self.check_candidate(row_index, column_index, candidate): # check candidate
                     self.grid[row_index][column_index]["candidates"].remove(candidate)
                     self.grid[row_index][column_index]["value"] = candidate
                     column_index += 1
@@ -57,7 +62,12 @@ class Sudoku:
                         self.grid[row_index][column_index]["value"] = "_"
                         #return False
         
-        winsound.Beep(500, 100)
+        if self.timer:
+            print("--- Grid generated in %s sec ---" % (time.time() - start_time))
+        if self.store:
+            pass 
+        if self.sound:
+            winsound.Beep(500, 100)
             
     #TODO
     def check_candidate(self, candidate_row_index, candidate_column_index, candidate):
@@ -145,12 +155,22 @@ class Helper:
         """Returns random list of unique integers between min & max (both values included)."""
         return random.sample(range(min,max + 1), max - min + 1)
 
+    #TODO
     @staticmethod
     def store(value):
-        csv_path = "C:\\xampp\\htdocs\\alex\\sudoku-generator\\grid stash\\9x9.csv"
-        csv_obj = open(csv_path, 'a', newline='')
-        csv_writer = csv.writer(csv_obj)
-        csv_writer.writerow(value)
+        csv_file_path = "storage/9x9.csv"
+        with open(csv_file_path, "r", newline="") as csv_file:
+            csv_file_reader = csv.reader(csv_file)
+            grid_list = []
+            for grid in set(csv_file_reader):
+                if grid: # escape empty rows
+                    grid_list.append(grid)
+                
+
+        with open(csv_file_path, "w", newline="") as csv_file:
+            csv_file_writer = csv.writer(csv_file)
+            for grid in grid_list:
+                csv_file_writer.writerow(grid)
 
     @staticmethod
     def test():
