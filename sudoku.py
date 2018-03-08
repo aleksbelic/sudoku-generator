@@ -161,12 +161,10 @@ class Helper:
         csv_file_path = "storage/9x9.csv"
         with open(csv_file_path, "r", newline="") as csv_file:
             csv_file_reader = csv.reader(csv_file)
-            grid_list = []
-            for grid in set(csv_file_reader):
-                if grid: # escape empty rows
-                    grid_list.append(grid)
+            grid_list = [grid for grid in csv_file_reader]
+            if (value in grid_list) == False:
+                grid_list.append(value)
                 
-
         with open(csv_file_path, "w", newline="") as csv_file:
             csv_file_writer = csv.writer(csv_file)
             for grid in grid_list:
