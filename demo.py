@@ -1,8 +1,4 @@
-from sudoku import Sudoku, Helper
+from sudoku import Sudoku
 
-sudoku = Sudoku(9, True)
+sudoku = Sudoku() # size = 9, timer = False, sound = True, store = False
 sudoku.print_grid()
-
-#Helper.test()
-#Helper.store(['4', '3'])
-#print('1' in ['1','2'])

@@ -1,9 +1,14 @@
-import random, math, winsound, time, csv
+import random, math, time, winsound, csv
 
 class Sudoku:
     """Some docstring."""
-    def __init__(self, size, timer = False, sound = True, store = False):
-        self.size = size
+    def __init__(self, size = 9, timer = False, sound = True, store = False):
+        sqrtSize = math.sqrt(size)
+        if (sqrtSize).is_integer():
+            self.size = size
+        else:
+            exit("ERROR: unable to generate grid!\nSquare root of grid size should be an integer and square root of " + str(size) + " is " + str(sqrtSize) + ".\nTry with 4, 9, 16 etc.")
+
         self.timer = timer
         self.store = store
         self.sound = sound
