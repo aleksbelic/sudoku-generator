@@ -21,11 +21,13 @@ class Sudoku:
                     candidates = Helper.get_rand_unique_list(1, self.size)
                 ))
         self.generate_grid()
+        if not self.check_grid():
+            exit("ERROR: grid is not valid, duplicates found.")
 
     #TODO
     def generate_grid(self):
         """Generates random sudoku grid."""
-
+        print("Generating grid...")
         if self.timer:
             start_time = time.time()
 
@@ -68,7 +70,7 @@ class Sudoku:
                         #return False
         
         if self.timer:
-            print("--- Grid generated in %s sec ---" % (time.time() - start_time))
+            print("Done! Grid generated in %s sec" % (time.time() - start_time))
         if self.store:
             pass 
         if self.sound:
@@ -77,14 +79,12 @@ class Sudoku:
     #TODO
     def check_candidate(self, candidate_row_index, candidate_column_index, candidate):
         # checking row
-        for i in range(0, candidate_column_index): # candidate_column_index excluded
-            #print(self.grid[candidate_row_index][i]["value"])
+        for i in range(candidate_column_index): # candidate_column_index excluded
             if self.grid[candidate_row_index][i]["value"] == candidate:
                 return False
         
         # checking column
-        for j in range(0, candidate_row_index): # candidate_row_index excluded
-            #print(self.grid[candidate_row_index][i]["value"])
+        for j in range(candidate_row_index): # candidate_row_index excluded
             if self.grid[j][candidate_column_index]["value"] == candidate:
                 return False
         
@@ -96,35 +96,21 @@ class Sudoku:
             for j in range(self.size):
                 box_row_index = int(i / sqrtSize)
                 box_column_index = int(j / sqrtSize)
-                if candidate_box_row_index == box_row_index and candidate_box_column_index == box_column_index:
-                    if candidate == self.grid[i][j]["value"]:
-                        return False
+                if candidate_box_row_index == box_row_index and candidate_box_column_index == box_column_index: # if in the same box
+                    if candidate_row_index != i and candidate_box_column_index != j: # don't compare to itself
+                        if candidate == self.grid[i][j]["value"]:
+                            return False
 
         return True # OK
 
-    """
-    #TODO
     def check_grid(self):
-        #Checks sudoku grid.
-
+        """Checks sudoku grid cell by cell."""
         # checking rows
         for row_index in range(self.size):
-            if len(set(self.grid[row_index])) != self.size: # set removes the duplicates
-                return False
-
-        #checking columns
-        for i in range(self.size):
-            column = []
-            for j in range(self.size):
-                column.append(self.grid[j][i])
-            if len(set(column)) != self.size:
-                return False
-
-        #checking boxes
-        box_count = int(math.sqrt(self.size))
-
+            for column_index in range(self.size):
+                if not self.check_candidate(row_index, column_index, self.grid[row_index][column_index]["value"]):
+                    return False
         return True
-    """
 
     def print_grid(self):
         """Prints sudoku grid."""
@@ -167,7 +153,7 @@ class Helper:
         with open(csv_file_path, "r", newline="") as csv_file:
             csv_file_reader = csv.reader(csv_file)
             grid_list = [grid for grid in csv_file_reader]
-            if (value in grid_list) == False:
+            if not (value in grid_list):
                 grid_list.append(value)
                 
         with open(csv_file_path, "w", newline="") as csv_file:
