@@ -1,4 +1,5 @@
-from sudoku import Sudoku
+from sudoku import Sudoku, Helper
 
-sudoku = Sudoku(9, True) # size = 9, timer = False, sound = True, store = False
-sudoku.print_grid()
+sudoku_example = Sudoku() # size = 9, timer = False, sound = True
+sudoku_example.print_grid()
+Helper.store(sudoku_example) # storing grid to file ./storage/9x9.csv

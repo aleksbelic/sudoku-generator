@@ -2,7 +2,7 @@ import random, math, time, winsound, csv
 
 class Sudoku:
     """Some docstring."""
-    def __init__(self, size = 9, timer = False, sound = True, store = False):
+    def __init__(self, size = 9, timer = False, sound = True):
         sqrtSize = math.sqrt(size)
         if (sqrtSize).is_integer():
             self.size = size
@@ -10,7 +10,6 @@ class Sudoku:
             exit("ERROR: unable to generate grid!\nSquare root of grid size should be an integer and square root of " + str(size) + " is " + str(sqrtSize) + ".\nTry with 4, 9, 16 etc.")
 
         self.timer = timer
-        self.store = store
         self.sound = sound
         self.grid = []
         for row_index in range(self.size):
@@ -24,7 +23,6 @@ class Sudoku:
         if not self.check_grid():
             exit("ERROR: grid is not valid, duplicates found.")
 
-    #TODO
     def generate_grid(self):
         """Generates random sudoku grid."""
         print("Generating grid...")
@@ -71,12 +69,9 @@ class Sudoku:
         
         if self.timer:
             print("Done! Grid generated in %s sec" % (time.time() - start_time))
-        if self.store:
-            pass 
         if self.sound:
             winsound.Beep(500, 100)
             
-    #TODO
     def check_candidate(self, candidate_row_index, candidate_column_index, candidate):
         # checking row
         for i in range(candidate_column_index): # candidate_column_index excluded
@@ -105,7 +100,6 @@ class Sudoku:
 
     def check_grid(self):
         """Checks sudoku grid cell by cell."""
-        # checking rows
         for row_index in range(self.size):
             for column_index in range(self.size):
                 if not self.check_candidate(row_index, column_index, self.grid[row_index][column_index]["value"]):
@@ -132,6 +126,14 @@ class Sudoku:
                     row += "|"
                 row += " " + str(cell["value"]) + " "
             print(row)
+        
+    def grid_values_to_list(self):
+        """Grid to list"""
+        values_list = []
+        for row_index in range(self.size):
+            for column_index in range(self.size):
+                values_list.append(self.grid[row_index][column_index]["value"])
+        return values_list
 
 class Helper:
     """Some docstring"""
@@ -146,15 +148,16 @@ class Helper:
         """Returns random list of unique integers between min & max (both values included)."""
         return random.sample(range(min,max + 1), max - min + 1)
 
-    #TODO
     @staticmethod
-    def store(value):
-        csv_file_path = "storage/9x9.csv"
+    def store(sudoku):
+        """Some docstring"""
+        csv_file_name = str(sudoku.size) + "x" + str(sudoku.size) + ".csv"
+        csv_file_path = "storage/" + csv_file_name
         with open(csv_file_path, "r", newline="") as csv_file:
             csv_file_reader = csv.reader(csv_file)
             grid_list = [grid for grid in csv_file_reader]
-            if not (value in grid_list):
-                grid_list.append(value)
+            if not (sudoku.grid_values_to_list() in grid_list):
+                grid_list.append(sudoku.grid_values_to_list())
                 
         with open(csv_file_path, "w", newline="") as csv_file:
             csv_file_writer = csv.writer(csv_file)
