@@ -1,7 +1,7 @@
 import random, math, time, winsound, csv
 
 class Sudoku:
-    """Some docstring."""
+    """Sudoku class."""
     def __init__(self, size = 9, timer = False, sound = True):
         sqrtSize = math.sqrt(size)
         if (sqrtSize).is_integer():
@@ -65,10 +65,10 @@ class Sudoku:
                             column_index = self.size - 1
                             row_index -= 1
                         self.grid[row_index][column_index]["value"] = "_"
-                        #return False
         
+        print("Done!")
         if self.timer:
-            print("Done! Grid generated in %s sec" % (time.time() - start_time))
+            print("Grid generated in %s sec" % (time.time() - start_time))
         if self.sound:
             winsound.Beep(500, 100)
             
@@ -108,6 +108,7 @@ class Sudoku:
 
     def print_grid(self):
         """Prints sudoku grid."""
+
         sizeSqrt = int(math.sqrt(self.size))
         for row_index in range(self.size):
             # printing horizontal dashes
@@ -128,7 +129,7 @@ class Sudoku:
             print(row)
         
     def grid_values_to_list(self):
-        """Grid to list"""
+        """Generates list with grid values."""
         values_list = []
         for row_index in range(self.size):
             for column_index in range(self.size):
@@ -136,7 +137,7 @@ class Sudoku:
         return values_list
 
 class Helper:
-    """Some docstring"""
+    """Helper class. Used for additional sudoku methods."""
 
     @staticmethod
     def get_rand_num(min, max):
@@ -150,21 +151,19 @@ class Helper:
 
     @staticmethod
     def store(sudoku):
-        """Some docstring"""
+        """Stores generated grid to appropriate CSV file. No duplicates will be added."""
         csv_file_name = str(sudoku.size) + "x" + str(sudoku.size) + ".csv"
         csv_file_path = "storage/" + csv_file_name
-        with open(csv_file_path, "r", newline="") as csv_file:
-            csv_file_reader = csv.reader(csv_file)
-            grid_list = [grid for grid in csv_file_reader]
-            if not (sudoku.grid_values_to_list() in grid_list):
-                grid_list.append(sudoku.grid_values_to_list())
-                
-        with open(csv_file_path, "w", newline="") as csv_file:
-            csv_file_writer = csv.writer(csv_file)
-            for grid in grid_list:
-                csv_file_writer.writerow(grid)
-
-    @staticmethod
-    def test():
-        for i in range (5, -1, -1):
-            print(i)
+        try:
+            with open(csv_file_path, "r", newline="") as csv_file:
+                csv_file_reader = csv.reader(csv_file)
+                grid_list = [grid for grid in csv_file_reader]
+                if not (sudoku.grid_values_to_list() in grid_list):
+                    grid_list.append(sudoku.grid_values_to_list())
+                    
+            with open(csv_file_path, "w", newline="") as csv_file:
+                csv_file_writer = csv.writer(csv_file)
+                for grid in grid_list:
+                    csv_file_writer.writerow(grid)
+        except FileNotFoundError:
+            exit("ERROR: sudoku could not be stored, file \"" + csv_file_path + "\" was not found.")
