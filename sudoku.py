@@ -35,17 +35,17 @@ class Sudoku:
             
             while True:
 
-                if self.grid[row_index][column_index]["candidates"] == []: # last candidate was false
+                try:
+                    candidate = self.grid[row_index][column_index]["candidates"][0]
+                except IndexError: # candidates list is empty
                     self.grid[row_index][column_index]["candidates"] = Helper.get_rand_unique_list(1, self.size)
+                    self.grid[row_index][column_index]["value"] = "_"
                     if column_index != 0:
                         column_index -= 1
                     else:
                         column_index = self.size - 1
                         row_index -= 1
                     break
-
-                else:
-                    candidate = self.grid[row_index][column_index]["candidates"][0]
                 
                 if self.check_candidate(row_index, column_index, candidate): # check candidate
                     self.grid[row_index][column_index]["candidates"].remove(candidate)
@@ -57,14 +57,6 @@ class Sudoku:
                     break
                 else:
                     self.grid[row_index][column_index]["candidates"].remove(candidate)
-                    if self.grid[row_index][column_index]["candidates"] == []: # last candidate was false
-                        self.grid[row_index][column_index]["candidates"] = Helper.get_rand_unique_list(1, self.size)
-                        if column_index != 0:
-                            column_index -= 1
-                        else:
-                            column_index = self.size - 1
-                            row_index -= 1
-                        self.grid[row_index][column_index]["value"] = "_"
         
         print("Done!")
         if self.timer:
