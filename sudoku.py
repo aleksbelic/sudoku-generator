@@ -125,7 +125,7 @@ class Sudoku:
         values_list = []
         for row_index in range(self.size):
             for column_index in range(self.size):
-                values_list.append(self.grid[row_index][column_index]["value"])
+                values_list.append(str(self.grid[row_index][column_index]["value"]))
         return values_list
 
 class Helper:
