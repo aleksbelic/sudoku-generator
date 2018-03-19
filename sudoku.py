@@ -1,29 +1,22 @@
 import random, math, time, winsound, csv
 
 class Sudoku:
-    """Sudoku class."""
-    def __init__(self, size = 9, timer = False, sound = True):
-        sqrtSize = math.sqrt(size)
-        if (sqrtSize).is_integer():
-            self.size = size
-        else:
-            exit("ERROR: unable to generate grid!\nSquare root of grid size should be an integer and square root of " + str(size) + " is " + str(sqrtSize) + ".\nTry with 4, 9, 16 etc.")
-
+    def __init__(self, size, timer, sound):
+        self.size = size
+        self.grid = []
         self.timer = timer
         self.sound = sound
-        self.grid = []
-        for row_index in range(self.size):
-            self.grid.append([])
-            for _ in range(self.size):
-                self.grid[row_index].append(dict(
-                    value = "_",
-                    candidates = Helper.get_rand_unique_list(1, self.size)
-                ))
-        self.generate_grid()
-        if not self.check_grid():
-            exit("ERROR: grid is not valid, duplicates found.")
+        pass
 
-    def generate_grid(self):
+    def grid_values_to_list(self):
+        """Generates list with grid values."""
+        values_list = []
+        for row_index in range(self.size):
+            for column_index in range(self.size):
+                values_list.append(str(self.grid[row_index][column_index]["value"]))
+        return values_list
+    
+    def solve(self):
         """Generates random sudoku grid."""
         print("Generating grid...")
         if self.timer:
@@ -32,46 +25,54 @@ class Sudoku:
         row_index = 0
         column_index = 0
         while (row_index < self.size):
-            
-            while True:
-
-                try:
-                    candidate = self.grid[row_index][column_index]["candidates"][0]
-                except IndexError: # candidates list is empty
-                    self.grid[row_index][column_index]["candidates"] = Helper.get_rand_unique_list(1, self.size)
-                    self.grid[row_index][column_index]["value"] = "_"
-                    if column_index != 0:
-                        column_index -= 1
+            if self.grid[row_index][column_index]["fixed"] == False:
+                while True: 
+                    try:
+                        candidate = self.grid[row_index][column_index]["candidates"][0]
+                    except IndexError: # candidates list is empty
+                        self.grid[row_index][column_index]["candidates"] = Helper.get_rand_unique_list(1, self.size)
+                        self.grid[row_index][column_index]["value"] = "_"
+                        while True:
+                            if column_index != 0:
+                                column_index -= 1
+                            else:
+                                column_index = self.size - 1
+                                row_index -= 1
+                            if self.grid[row_index][column_index]["fixed"] == False:
+                                break
+                        break
+                        
+                    if self.check_candidate(row_index, column_index, candidate): # check candidate
+                        self.grid[row_index][column_index]["candidates"].remove(candidate)
+                        self.grid[row_index][column_index]["value"] = candidate
+                        column_index += 1
+                        if column_index == self.size:
+                            column_index = 0
+                            row_index += 1
+                        break
                     else:
-                        column_index = self.size - 1
-                        row_index -= 1
-                    break
-                
-                if self.check_candidate(row_index, column_index, candidate): # check candidate
-                    self.grid[row_index][column_index]["candidates"].remove(candidate)
-                    self.grid[row_index][column_index]["value"] = candidate
-                    column_index += 1
-                    if column_index == self.size:
-                        column_index = 0
-                        row_index += 1
-                    break
-                else:
-                    self.grid[row_index][column_index]["candidates"].remove(candidate)
-        
+                        print(row_index, column_index, self.grid[row_index][column_index]["candidates"])
+                        self.grid[row_index][column_index]["candidates"].remove(candidate)
+            else:
+                column_index += 1
+                if column_index == self.size:
+                    column_index = 0
+                    row_index += 1
+
         print("Done!")
         if self.timer:
             print("Grid generated in %s sec" % (time.time() - start_time))
         if self.sound:
             winsound.Beep(500, 100)
-            
+    
     def check_candidate(self, candidate_row_index, candidate_column_index, candidate):
         # checking row
-        for i in range(candidate_column_index): # candidate_column_index excluded
+        for i in range(self.size): # candidate_column_index excluded
             if self.grid[candidate_row_index][i]["value"] == candidate:
                 return False
         
         # checking column
-        for j in range(candidate_row_index): # candidate_row_index excluded
+        for j in range(self.size): # candidate_row_index excluded
             if self.grid[j][candidate_column_index]["value"] == candidate:
                 return False
         
@@ -119,14 +120,103 @@ class Sudoku:
                     row += "|"
                 row += " " + str(cell["value"]) + " "
             print(row)
-        
-    def grid_values_to_list(self):
-        """Generates list with grid values."""
-        values_list = []
+
+class SudokuGenerator(Sudoku):
+    """SudokuGenerator class."""
+    def __init__(self, size = 9, timer = False, sound = True):
+        sqrtSize = math.sqrt(size)
+        if (sqrtSize).is_integer():
+            self.size = int(size)
+        else:
+            exit("ERROR: unable to generate grid!\nSquare root of grid size should be an integer and square root of " + str(size) + " is " + str(sqrtSize) + ".\nTry with size 4, 9, 16 etc.")
+        self.timer = timer
+        self.sound = sound
+        self.grid = []
         for row_index in range(self.size):
-            for column_index in range(self.size):
-                values_list.append(str(self.grid[row_index][column_index]["value"]))
-        return values_list
+            self.grid.append([])
+            for _ in range(self.size):
+                self.grid[row_index].append(dict(
+                    value = "_",
+                    fixed = False,
+                    candidates = Helper.get_rand_unique_list(1, self.size),
+                ))
+
+class SudokuSolver(Sudoku):
+    """SudokuSolver class."""
+    def __init__(self, puzzle_grid = [], timer = False, sound = True):
+        sqrtPuzzleGridLen = math.sqrt(len(puzzle_grid))
+        if (sqrtPuzzleGridLen).is_integer():
+            self.size = int(sqrtPuzzleGridLen)
+        else:
+            exit("ERROR: incorrect paramater!\nSquare root of grid size should be an integer and square root of " + str(len(puzzle_grid)) + " is " + str(sqrtPuzzleGridLen) + ".")
+        self.timer = timer
+        self.sound = sound
+        self.grid = []
+        puzzle_grid_counter = 0
+        for row_index in range(self.size):
+            self.grid.append([])
+            for _ in range(self.size):
+                if puzzle_grid[puzzle_grid_counter] == 0:
+                    self.grid[row_index].append(dict(
+                        value = "_",
+                        fixed = False,
+                        candidates = Helper.get_rand_unique_list(1, self.size),
+                    ))
+                else:
+                    self.grid[row_index].append(dict(
+                        value = puzzle_grid[puzzle_grid_counter],
+                        fixed = True
+                    ))
+                puzzle_grid_counter += 1
+
+    def solve(self):
+        """Generates random sudoku grid."""
+        print("Generating grid...")
+        if self.timer:
+            start_time = time.time()
+
+        row_index = 0
+        column_index = 0
+        while (row_index < self.size):
+            if self.grid[row_index][column_index]["fixed"] == False:
+                while True: 
+                    try:
+                        candidate = self.grid[row_index][column_index]["candidates"][0]
+                    except IndexError: # candidates list is empty
+                        self.grid[row_index][column_index]["candidates"] = Helper.get_rand_unique_list(1, self.size)
+                        self.grid[row_index][column_index]["value"] = "_"
+                        while True:
+                            if column_index != 0:
+                                column_index -= 1
+                            else:
+                                column_index = self.size - 1
+                                row_index -= 1
+                            if self.grid[row_index][column_index]["fixed"] == False:
+                                break
+                        break
+                        
+                    if self.check_candidate(row_index, column_index, candidate): # check candidate
+                        self.grid[row_index][column_index]["candidates"].remove(candidate)
+                        self.grid[row_index][column_index]["value"] = candidate
+                        column_index += 1
+                        if column_index == self.size:
+                            column_index = 0
+                            row_index += 1
+                        break
+                    else:
+                        print(row_index, column_index, self.grid[row_index][column_index]["candidates"])
+                        self.grid[row_index][column_index]["candidates"].remove(candidate)
+            else:
+                column_index += 1
+                if column_index == self.size:
+                    column_index = 0
+                    row_index += 1
+
+        print("Done!")
+        if self.timer:
+            print("Grid generated in %s sec" % (time.time() - start_time))
+        if self.sound:
+            winsound.Beep(500, 100)
 
 class Helper:
     """Helper class. Used for additional sudoku methods."""
