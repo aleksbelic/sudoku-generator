@@ -1,12 +1,12 @@
 import random, math, time, winsound, csv
 
 class Sudoku:
+    """Some docstring."""
     def __init__(self, size, timer, sound):
         self.size = size
         self.grid = []
         self.timer = timer
         self.sound = sound
-        pass
 
     def grid_values_to_list(self):
         """Generates list with grid values."""
@@ -51,7 +51,6 @@ class Sudoku:
                             row_index += 1
                         break
                     else:
-                        print(row_index, column_index, self.grid[row_index][column_index]["candidates"])
                         self.grid[row_index][column_index]["candidates"].remove(candidate)
             else:
                 column_index += 1
@@ -66,16 +65,15 @@ class Sudoku:
             winsound.Beep(500, 100)
     
     def check_candidate(self, candidate_row_index, candidate_column_index, candidate):
+        """Some docstring."""
         # checking row
         for i in range(self.size): # candidate_column_index excluded
             if self.grid[candidate_row_index][i]["value"] == candidate:
                 return False
-        
         # checking column
         for j in range(self.size): # candidate_row_index excluded
             if self.grid[j][candidate_column_index]["value"] == candidate:
                 return False
-        
         #checking box
         sqrtSize = int(math.sqrt(self.size))
         candidate_box_row_index = int(candidate_row_index / sqrtSize)
@@ -88,8 +86,7 @@ class Sudoku:
                     if candidate_row_index != i and candidate_box_column_index != j: # don't compare to itself
                         if candidate == self.grid[i][j]["value"]:
                             return False
-
-        return True # OK
+        return True # candidate is valid
 
     def check_grid(self):
         """Checks sudoku grid cell by cell."""
@@ -101,7 +98,6 @@ class Sudoku:
 
     def print_grid(self):
         """Prints sudoku grid."""
-
         sizeSqrt = int(math.sqrt(self.size))
         for row_index in range(self.size):
             # printing horizontal dashes
@@ -140,6 +136,10 @@ class SudokuGenerator(Sudoku):
                     fixed = False,
                     candidates = Helper.get_rand_unique_list(1, self.size),
                 ))
+        
+    def generate(self):
+        """Some docstring."""    
+        self.solve()
 
 class SudokuSolver(Sudoku):
     """SudokuSolver class."""
@@ -168,55 +168,6 @@ class SudokuSolver(Sudoku):
                         fixed = True
                     ))
                 puzzle_grid_counter += 1
-
-    def solve(self):
-        """Generates random sudoku grid."""
-        print("Generating grid...")
-        if self.timer:
-            start_time = time.time()
-
-        row_index = 0
-        column_index = 0
-        while (row_index < self.size):
-            if self.grid[row_index][column_index]["fixed"] == False:
-                while True: 
-                    try:
-                        candidate = self.grid[row_index][column_index]["candidates"][0]
-                    except IndexError: # candidates list is empty
-                        self.grid[row_index][column_index]["candidates"] = Helper.get_rand_unique_list(1, self.size)
-                        self.grid[row_index][column_index]["value"] = "_"
-                        while True:
-                            if column_index != 0:
-                                column_index -= 1
-                            else:
-                                column_index = self.size - 1
-                                row_index -= 1
-                            if self.grid[row_index][column_index]["fixed"] == False:
-                                break
-                        break
-                        
-                    if self.check_candidate(row_index, column_index, candidate): # check candidate
-                        self.grid[row_index][column_index]["candidates"].remove(candidate)
-                        self.grid[row_index][column_index]["value"] = candidate
-                        column_index += 1
-                        if column_index == self.size:
-                            column_index = 0
-                            row_index += 1
-                        break
-                    else:
-                        print(row_index, column_index, self.grid[row_index][column_index]["candidates"])
-                        self.grid[row_index][column_index]["candidates"].remove(candidate)
-            else:
-                column_index += 1
-                if column_index == self.size:
-                    column_index = 0
-                    row_index += 1
-
-        print("Done!")
-        if self.timer:
-            print("Grid generated in %s sec" % (time.time() - start_time))
-        if self.sound:
-            winsound.Beep(500, 100)
 
 class Helper:
     """Helper class. Used for additional sudoku methods."""
