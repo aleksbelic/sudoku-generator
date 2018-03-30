@@ -67,13 +67,25 @@ class Sudoku:
     def check_candidate(self, candidate_row_index, candidate_column_index, candidate):
         """Some docstring."""
         # checking row
-        for i in range(self.size): # candidate_column_index excluded
-            if self.grid[candidate_row_index][i]["value"] == candidate:
-                return False
+        if self.__class__.__name__ == "SudokuGenerator":
+            for i in range(candidate_column_index): # candidate_column_index excluded
+                if self.grid[candidate_row_index][i]["value"] == candidate:
+                    return False
+        elif self.__class__.__name__ == "SudokuSolver":
+            for i in range(self.size):
+                if self.grid[candidate_row_index][i]["value"] == candidate:
+                    return False
+
         # checking column
-        for j in range(self.size): # candidate_row_index excluded
-            if self.grid[j][candidate_column_index]["value"] == candidate:
-                return False
+        if self.__class__.__name__ == "SudokuGenerator":
+            for j in range(candidate_row_index): # candidate_row_index excluded
+                if self.grid[j][candidate_column_index]["value"] == candidate:
+                    return False
+        elif self.__class__.__name__ == "SudokuSolver":
+            for j in range(self.size): # candidate_row_index excluded
+                if self.grid[j][candidate_column_index]["value"] == candidate:
+                    return False
+
         #checking box
         sqrtSize = int(math.sqrt(self.size))
         candidate_box_row_index = int(candidate_row_index / sqrtSize)
@@ -83,7 +95,7 @@ class Sudoku:
                 box_row_index = int(i / sqrtSize)
                 box_column_index = int(j / sqrtSize)
                 if candidate_box_row_index == box_row_index and candidate_box_column_index == box_column_index: # if in the same box
-                    if candidate_row_index != i and candidate_box_column_index != j: # don't compare to itself
+                    if candidate_row_index != i and candidate_column_index != j: # don't compare to itself
                         if candidate == self.grid[i][j]["value"]:
                             return False
         return True # candidate is valid
