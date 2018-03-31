@@ -90,14 +90,11 @@ class Sudoku:
         sqrtSize = int(math.sqrt(self.size))
         candidate_box_row_index = int(candidate_row_index / sqrtSize)
         candidate_box_column_index = int(candidate_column_index / sqrtSize)
-        for i in range(self.size):
-            for j in range(self.size):
-                box_row_index = int(i / sqrtSize)
-                box_column_index = int(j / sqrtSize)
-                if candidate_box_row_index == box_row_index and candidate_box_column_index == box_column_index: # if in the same box
-                    if candidate_row_index != i and candidate_column_index != j: # don't compare to itself
-                        if candidate == self.grid[i][j]["value"]:
-                            return False
+        for i in range(candidate_box_row_index * self.size, (candidate_box_row_index + 1) * sqrtSize):
+            for j in range(candidate_box_column_index * self.size, (candidate_box_column_index + 1) * sqrtSize):
+                if candidate_row_index != i and candidate_column_index != j: # don't compare to itself
+                    if candidate == self.grid[i][j]["value"]:
+                        return False
         return True # candidate is valid
 
     def check_grid(self):
