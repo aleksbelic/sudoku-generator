@@ -15,6 +15,11 @@ class Sudoku:
             for column_index in range(self.size):
                 values_list.append(str(self.grid[row_index][column_index]["value"]))
         return values_list
+
+    # TODO
+    def generate_candidates(self):
+        """Generates candidate list for specific cell."""
+        pass
     
     def solve(self):
         """Generates random sudoku grid."""
