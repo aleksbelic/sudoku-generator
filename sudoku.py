@@ -1,7 +1,7 @@
 import random, math, time, winsound, csv
 
 class Sudoku:
-    """Some docstring."""
+    """Sudoku class."""
     def __init__(self, size, timer, sound):
         self.size = size
         self.grid = []
@@ -65,7 +65,7 @@ class Sudoku:
             winsound.Beep(500, 100)
     
     def check_candidate(self, candidate_row_index, candidate_column_index, candidate):
-        """Some docstring."""
+        """Check if candidate is valid in current cell."""
         # checking row
         if self.__class__.__name__ == "SudokuGenerator":
             for i in range(candidate_column_index): # candidate_column_index excluded
@@ -147,7 +147,7 @@ class SudokuGenerator(Sudoku):
                 ))
         
     def generate(self):
-        """Some docstring."""    
+        """Generates fully solved sudoku grid. Note: generating grid is like solving empty grid."""    
         self.solve()
 
 class SudokuSolver(Sudoku):
