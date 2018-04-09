@@ -16,11 +16,15 @@ class Sudoku:
                 values_list.append(str(self.grid[row_index][column_index]["value"]))
         return values_list
 
-    # TODO
-    def generate_candidates(self):
+    def generate_cell_candidates(self, cell_row_index, cell_column_index):
         """Generates candidate list for specific cell."""
-        pass
-    
+        candidates_to_validate = Helper.get_rand_unique_list(1, self.size)
+        valid_candidates = []
+        for candidate in candidates_to_validate:
+            if self.check_candidate(cell_row_index, cell_column_index, candidate):
+                valid_candidates.append(candidate)
+        return valid_candidates
+
     def solve(self):
         """Generates random sudoku grid."""
         print("Generating grid...")
@@ -174,7 +178,7 @@ class SudokuSolver(Sudoku):
                     self.grid[row_index].append(dict(
                         value = "_",
                         fixed = False,
-                        candidates = Helper.get_rand_unique_list(1, self.size),
+                        candidates = [],
                     ))
                 else:
                     self.grid[row_index].append(dict(
@@ -182,6 +186,11 @@ class SudokuSolver(Sudoku):
                         fixed = True
                     ))
                 puzzle_grid_counter += 1
+
+        for row_index in range(self.size):
+            for column_index in range(self.size):
+                if not self.grid[row_index][column_index]["fixed"]:
+                    self.grid[row_index][column_index]["candidates"] = self.generate_cell_candidates(row_index, column_index)
 
 class Helper:
     """Helper class. Used for additional sudoku methods."""
