@@ -246,10 +246,7 @@ class Helper:
                     csv_file_writer.writerow(grid)
 
             if duplicate_counter > 0:
-                if duplicate_counter == 1:
-                    print("1 duplicate removed.")
-                else:
-                    print(str(duplicate_counter) + " duplicates removed.")
+                print(str(duplicate_counter) + (" duplicate" if duplicate_counter == 1 else " duplicates") + " removed.")
             else:
                 print("No duplicates found.")
 
