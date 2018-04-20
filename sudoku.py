@@ -227,6 +227,7 @@ class Helper:
     @staticmethod
     def remove_duplicates_from_storage(csv_file_name):
         """Removes all duplicates from storage file."""
+        duplicate_counter = 0
         csv_file_path = "storage/" + csv_file_name
         try:
             with open(csv_file_path, "r", newline="") as csv_file:
@@ -236,10 +237,21 @@ class Helper:
                 for i in range(0, len(grid_list)):
                     if not grid_list[i] in grid_list_unique:
                         grid_list_unique.append(grid_list[i])
+                    else:
+                        duplicate_counter += 1
                     
             with open(csv_file_path, "w", newline="") as csv_file:
                 csv_file_writer = csv.writer(csv_file)
                 for grid in grid_list_unique:
                     csv_file_writer.writerow(grid)
+
+            if duplicate_counter > 0:
+                if duplicate_counter == 1:
+                    print("1 duplicate removed.")
+                else:
+                    print(str(duplicate_counter) + " duplicates removed.")
+            else:
+                print("No duplicates found.")
+
         except FileNotFoundError:
             exit("ERROR: sudoku could not be stored, file \"" + csv_file_path + "\" was not found.")
