@@ -9,12 +9,14 @@ All examples are located inside **demo.py** file.
 ### Solving sudoku puzzle
 Solving a puzzle is done using **SudokuSolver** class. Constructor params:
 - **puzzle_grid**, list, puzzle values placed inside a list with **0** in place where puzzle cell is empty, default is [] (empty list)
+
+Method **solve()** completes the puzzle. It receives 2 params:
 - **timer**, boolean, defines if time should be measured, default is false
 - **sound**, boolean, defines if completion should be followed by a sound, default is true
 ```
 sudoku_puzzle = [0,0,5,0,1,0,0,0,0,0,2,0,4,0,0,0,0,1,0,9,0,5,0,0,0,8,0,5,0,8,0,0,0,3,0,0,0,7,2,0,4,0,1,6,0,0,0,6,0,0,0,7,0,2,0,5,0,0,0,1,0,2,0,7,0,0,0,0,8,0,3,0,0,0,0,0,3,0,6,0,0,]
-sudoku_solver = SudokuSolver(sudoku_puzzle) # sudoku_puzzle, timer = False, sound = True
-sudoku_solver.solve()
+sudoku_solver = SudokuSolver(sudoku_puzzle)
+sudoku_solver.solve() # timer = False, sound = True
 sudoku_solver.print_grid()
 ```
 Output:
@@ -38,11 +40,13 @@ Done!
 
 Generating new puzzle is done using **SudokuGenerator** class. Constructor params:
 - **size**, integer, defines grid size, default is 9
+
+Method **generate()** generates new, fully solved puzzle from scratch. It receives 2 params: 
 - **timer**, boolean, defines if time should be measured, default is false
 - **sound**, boolean, defines if completion should be followed by a sound, default is true
 ```
-sudoku_example = SudokuGenerator() # size = 9, timer = False, sound = True
-sudoku_example.generate()
+sudoku_example = SudokuGenerator() # size = 9
+sudoku_example.generate() # timer = False, sound = True
 sudoku_example.print_grid()
 ```
 Output:

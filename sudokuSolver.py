@@ -27,6 +27,7 @@ class SudokuSolver(Sudoku):
                     ))
                 puzzle_grid_counter += 1
 
+        # generating candidates
         for row_index in range(self.size):
             for column_index in range(self.size):
                 if not self.grid[row_index][column_index]["fixed"]:
