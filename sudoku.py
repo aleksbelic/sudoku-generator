@@ -1,12 +1,11 @@
-import random, math, time, winsound, csv
+import random, math
+from helper import Helper
 
 class Sudoku:
     """Sudoku class."""
-    def __init__(self, size, timer, sound):
+    def __init__(self, size):
         self.size = size
         self.grid = []
-        self.timer = timer
-        self.sound = sound
 
     def grid_values_to_list(self):
         """Generates list with grid values."""
@@ -25,54 +24,14 @@ class Sudoku:
                 valid_candidates.append(candidate)
         return valid_candidates
 
-    def solve(self):
-        """Generates random sudoku grid."""
-        print("Generating grid...")
-        if self.timer:
-            start_time = time.time()
+    def check_grid(self):
+        """Checks sudoku grid cell by cell."""
+        for row_index in range(self.size):
+            for column_index in range(self.size):
+                if not self.check_candidate(row_index, column_index, self.grid[row_index][column_index]["value"]):
+                    return False
+        return True
 
-        row_index = 0
-        column_index = 0
-        while (row_index < self.size):
-            if self.grid[row_index][column_index]["fixed"] == False:
-                while True: 
-                    try:
-                        candidate = self.grid[row_index][column_index]["candidates"][0]
-                    except IndexError: # candidates list is empty
-                        self.grid[row_index][column_index]["candidates"] = Helper.get_rand_unique_list(1, self.size)
-                        self.grid[row_index][column_index]["value"] = "_"
-                        while True:
-                            if column_index != 0:
-                                column_index -= 1
-                            else:
-                                column_index = self.size - 1
-                                row_index -= 1
-                            if self.grid[row_index][column_index]["fixed"] == False:
-                                break
-                        break
-                        
-                    if self.check_candidate(row_index, column_index, candidate): # check candidate
-                        self.grid[row_index][column_index]["candidates"].remove(candidate)
-                        self.grid[row_index][column_index]["value"] = candidate
-                        column_index += 1
-                        if column_index == self.size:
-                            column_index = 0
-                            row_index += 1
-                        break
-                    else:
-                        self.grid[row_index][column_index]["candidates"].remove(candidate)
-            else:
-                column_index += 1
-                if column_index == self.size:
-                    column_index = 0
-                    row_index += 1
-
-        print("Done!")
-        if self.timer:
-            print("Grid generated in %s sec" % (time.time() - start_time))
-        if self.sound:
-            winsound.Beep(500, 100)
-    
     def check_candidate(self, candidate_row_index, candidate_column_index, candidate):
         """Check if candidate is valid in current cell."""
         # checking row
@@ -106,14 +65,6 @@ class Sudoku:
                         return False
         return True # candidate is valid
 
-    def check_grid(self):
-        """Checks sudoku grid cell by cell."""
-        for row_index in range(self.size):
-            for column_index in range(self.size):
-                if not self.check_candidate(row_index, column_index, self.grid[row_index][column_index]["value"]):
-                    return False
-        return True
-
     def print_grid(self):
         """Prints sudoku grid."""
         sizeSqrt = int(math.sqrt(self.size))
@@ -134,121 +85,3 @@ class Sudoku:
                     row += "|"
                 row += " " + str(cell["value"]) + " "
             print(row)
-
-class SudokuGenerator(Sudoku):
-    """SudokuGenerator class."""
-    def __init__(self, size = 9, timer = False, sound = True):
-        sqrtSize = math.sqrt(size)
-        if (sqrtSize).is_integer():
-            self.size = int(size)
-        else:
-            exit("ERROR: unable to generate grid!\nSquare root of grid size should be an integer and square root of " + str(size) + " is " + str(sqrtSize) + ".\nTry with size 4, 9, 16 etc.")
-        self.timer = timer
-        self.sound = sound
-        self.grid = []
-        for row_index in range(self.size):
-            self.grid.append([])
-            for _ in range(self.size):
-                self.grid[row_index].append(dict(
-                    value = "_",
-                    fixed = False,
-                    candidates = Helper.get_rand_unique_list(1, self.size),
-                ))
-        
-    def generate(self):
-        """Generates fully solved sudoku grid. Note: generating grid is like solving empty grid."""    
-        self.solve()
-
-class SudokuSolver(Sudoku):
-    """SudokuSolver class."""
-    def __init__(self, puzzle_grid = [], timer = False, sound = True):
-        sqrtPuzzleGridLen = math.sqrt(len(puzzle_grid))
-        if (sqrtPuzzleGridLen).is_integer():
-            self.size = int(sqrtPuzzleGridLen)
-        else:
-            exit("ERROR: incorrect paramater!\nSquare root of grid size should be an integer and square root of " + str(len(puzzle_grid)) + " is " + str(sqrtPuzzleGridLen) + ".")
-        self.timer = timer
-        self.sound = sound
-        self.grid = []
-        puzzle_grid_counter = 0
-        for row_index in range(self.size):
-            self.grid.append([])
-            for _ in range(self.size):
-                if puzzle_grid[puzzle_grid_counter] == 0:
-                    self.grid[row_index].append(dict(
-                        value = "_",
-                        fixed = False,
-                        candidates = [],
-                    ))
-                else:
-                    self.grid[row_index].append(dict(
-                        value = puzzle_grid[puzzle_grid_counter],
-                        fixed = True
-                    ))
-                puzzle_grid_counter += 1
-
-        for row_index in range(self.size):
-            for column_index in range(self.size):
-                if not self.grid[row_index][column_index]["fixed"]:
-                    self.grid[row_index][column_index]["candidates"] = self.generate_cell_candidates(row_index, column_index)
-
-class Helper:
-    """Helper class. Used for additional sudoku methods."""
-
-    @staticmethod
-    def get_rand_num(min, max):
-        """Returns random integer between min & max (both values included)."""
-        return random.randint(min, max)
-
-    @staticmethod
-    def get_rand_unique_list(min, max):
-        """Returns random list of unique integers between min & max (both values included)."""
-        return random.sample(range(min,max + 1), max - min + 1)
-
-    @staticmethod
-    def store(sudoku):
-        """Stores generated grid to appropriate CSV file. No duplicates will be added."""
-        csv_file_name = str(sudoku.size) + "x" + str(sudoku.size) + ".csv"
-        csv_file_path = "storage/" + csv_file_name
-        try:
-            with open(csv_file_path, "r", newline="") as csv_file:
-                csv_file_reader = csv.reader(csv_file)
-                grid_list = [grid for grid in csv_file_reader]
-                if not (sudoku.grid_values_to_list() in grid_list):
-                    grid_list.append(sudoku.grid_values_to_list())
-                    
-            with open(csv_file_path, "w", newline="") as csv_file:
-                csv_file_writer = csv.writer(csv_file)
-                for grid in grid_list:
-                    csv_file_writer.writerow(grid)
-        except FileNotFoundError:
-            exit("ERROR: sudoku could not be stored, file \"" + csv_file_path + "\" was not found.")
-
-    @staticmethod
-    def remove_duplicates_from_storage(csv_file_name):
-        """Removes all duplicates from storage file."""
-        duplicate_counter = 0
-        csv_file_path = "storage/" + csv_file_name
-        try:
-            with open(csv_file_path, "r", newline="") as csv_file:
-                csv_file_reader = csv.reader(csv_file)
-                grid_list = [grid for grid in csv_file_reader]
-                grid_list_unique = []
-                for i in range(0, len(grid_list)):
-                    if not grid_list[i] in grid_list_unique:
-                        grid_list_unique.append(grid_list[i])
-                    else:
-                        duplicate_counter += 1
-                    
-            with open(csv_file_path, "w", newline="") as csv_file:
-                csv_file_writer = csv.writer(csv_file)
-                for grid in grid_list_unique:
-                    csv_file_writer.writerow(grid)
-
-            if duplicate_counter > 0:
-                print(str(duplicate_counter) + (" duplicate" if duplicate_counter == 1 else " duplicates") + " removed.")
-            else:
-                print("No duplicates found.")
-
-        except FileNotFoundError:
-            exit("ERROR: sudoku could not be stored, file \"" + csv_file_path + "\" was not found.")
