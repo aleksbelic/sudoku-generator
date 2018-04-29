@@ -9,8 +9,8 @@ sudoku_solver.solve() # timer = False, sound = True
 sudoku_solver.check_grid()
 sudoku_solver.print_grid()
 
-#sudoku_example = SudokuGenerator() # size = 9, timer = False, sound = True
-#sudoku_example.generate()
+#sudoku_example = SudokuGenerator() # size = 9
+#sudoku_example.generate() # timer = False, sound = True
 #sudoku_example.check_grid()
 #sudoku_example.print_grid()
 #Helper.store(sudoku_example) # storing grid to file ./storage/9x9.csv

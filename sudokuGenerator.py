@@ -1,4 +1,4 @@
-import random, math, time, winsound, csv
+import math, time, winsound
 from sudoku import Sudoku, Helper
 
 class SudokuGenerator(Sudoku):
