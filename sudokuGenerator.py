@@ -56,13 +56,11 @@ class SudokuGenerator(Sudoku):
                 except IndexError: # candidates list is empty
                     self.grid[row_index][column_index]["candidates"] = Helper.get_rand_unique_list(1, self.size)
                     self.grid[row_index][column_index]["value"] = "_"
-                    while True:
-                        if column_index != 0:
-                            column_index -= 1
-                        else:
-                            column_index = self.size - 1
-                            row_index -= 1
-                        break
+                    if column_index != 0:
+                        column_index -= 1
+                    else:
+                        column_index = self.size - 1
+                        row_index -= 1
                     break
                     
                 if self.check_candidate(row_index, column_index, candidate): # check candidate
