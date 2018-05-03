@@ -50,7 +50,7 @@ class SudokuGenerator(Sudoku):
         row_index = 0
         column_index = 0
         while (row_index < self.size):
-            while True: 
+            while True: # trying out all the candidates for current cell
                 try:
                     candidate = self.grid[row_index][column_index]["candidates"][0]
                 except IndexError: # candidates list is empty
@@ -61,9 +61,9 @@ class SudokuGenerator(Sudoku):
                     else:
                         column_index = self.size - 1
                         row_index -= 1
-                    break
+                    break # switching to previous cell
                     
-                if self.check_candidate(row_index, column_index, candidate): # check candidate
+                if self.check_candidate(row_index, column_index, candidate): # check if candidate is valid
                     self.grid[row_index][column_index]["candidates"].remove(candidate)
                     self.grid[row_index][column_index]["value"] = candidate
                     column_index += 1
